@@ -1,5 +1,10 @@
-### epanetCPA: An EPANET-based Matlab wrapper to simulate Cyber Physical Attacks on water distribution systems
+### A MATLAB® toolbox for assessing the impacts of cyber-physical attacks on water distribution systems
 
-The repository is still under maintenance, although the code in the epanetCPA folder is already working.
+*epanetCPA* is an open-source object-oriented MATLAB® toolbox for modelling the hydraulic response of water distribution systems to cyber-physical attacks. epanetCPA allows users to quickly design various attack scenarios and assess their impact via simulation with EPANET, a popular public-domain model for water network analysis.
 
-In order to use the toolbox, please download and compile epanet2 (https://www.epa.gov/water-research/epanet) and put epanet2.h, epanet2.lib and epanet2.dll in your local epanetCPA folder.
+This repository is a __preview__ made available for peer reviewing purposes (the toolbox has been described in a submitted publication currently under review).
+
+#### Requirements:
+1. **EPANET2.0**&nbsp;In order to use the toolbox, please download and compile the EPANET2 Programmer's Toolkit from the [EPA website](https://www.epa.gov/water-research/epanet), and put the epanet2.h, epanet2.lib and epanet2.dll files in your local epanetCPA folder. If you are working on a 64bit machine, compiled DLLs can be found [here](http://epanet.de/developer/64bit.html.en)
+
+2. **MATLAB** The toolbox has been tested on MATLAB® R2014b, and it should work for later versions. Feedback on using epanetCPA with other versions of MATLAB is greatly appreciated. Please contact riccardo.taormina@gmail.com to provide your feedback.
