@@ -4,7 +4,7 @@
 
 This repository is a *preview* made available for peer reviewing purposes (the toolbox has been described in a submitted publication currently under review). If you happen to use this code for a publication, please cite the following paper which features a very early version of epanetCPA:
 ```html
-Taormina, R., Galelli, S., Tippenhauer, N. O., Salomons, E., & Ostfeld, A. (2017). Characterizing cyber-physical attacks on water distribution systems. Journal of Water Resources Planning and Management, 143(5), 04017009.
+Taormina, R., Galelli, S., Tippenhauer, N. O., Salomons, E., \& Ostfeld, A. (2017). Characterizing cyber-physical attacks on water distribution systems. Journal of Water Resources Planning and Management, 143(5), 04017009.
 ```
 
 #### Requirements:
