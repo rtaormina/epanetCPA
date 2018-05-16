@@ -20,6 +20,8 @@ Taormina, R., Galelli, S., Tippenhauer, N. O., Salomons, E., & Ostfeld, A. (2017
 3. Use the IPython notebook for visualizing the results, unless you want to do otherwise.
 
 ### Examples
+(Please refer to the EPANET map in the *.inp* file for details on the water network layour and control logic)
+
 1. *scenario01.cpa*&nbsp;&nbsp;&nbsp;&nbsp; Manipulation of sensor readings arriving to PLC3. The attacker injects false data showing that the tank T2 is full. The PLC closes valve V2 allowing the flow to enter the tank, thus disconnecting part of the network.
 2. *scenario02.cpa*&nbsp;&nbsp;&nbsp;&nbsp; Same as *scenario01* but run using the pressure driven engine to obtain more reliable results. 
 3. *scenario03.cpa*&nbsp;&nbsp;&nbsp;&nbsp; The attacker modifies the control logic of PLC5 so that some of the controlled pumps (PU4, PU5) switch on/off intermittently.
