@@ -121,6 +121,7 @@ classdef AttackOnCommunication < CyberPhysicalAttack
 
         % reset altered reading
         self.alteredReading = NaN;
+        self.setting = [];
     end    
     
     function [self, epanetSim] = evaluateAttack(self, epanetSim)
@@ -253,9 +254,13 @@ classdef AttackOnCommunication < CyberPhysicalAttack
         switch self.alterMethod
 
             case 'DoS'         
-                % reading is not updated                 
-				thisReading = getReading(self, rowToCopyFrom, epanetSim);  
-				self.alteredReading = thisReading;
+                % reading is not updated
+                if isnan(self.alteredReading)
+                    thisReading = getReading(self, rowToCopyFrom, epanetSim);  
+                    self.alteredReading = thisReading;
+                else
+                    % no need to update
+                end
 
             case 'constant'                
                 % subsitute reading with a constant value
@@ -310,8 +315,8 @@ classdef AttackOnCommunication < CyberPhysicalAttack
         T = epanetSim.T;
         rowToCopyFrom = numel(T); % initialize to current time
 
-        % switch alter method
-        if strcmp(self.alterMethod,'DoS')
+        % switch alter method        
+        if strcmp(self.alterMethod,'DoS') && isempty(self.setting)
             % DoS
             self.setting = getReading(self, rowToCopyFrom, epanetSim)>0;
         else
