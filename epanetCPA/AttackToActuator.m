@@ -1,18 +1,18 @@
-classdef AttackToActuator < CyberPhysicalAttack
+classdef AttackOnActuator < CyberPhysicalAttack
     % Physical attack to actuator. Actuator can be turned on, off. Settings
     % (nominal speed for pumps) can be altered.  
         
     % public methods
     methods
             
-    function self = AttackToActuator(...
+    function self = AttackOnActuator(...
             target, ini_condition, end_condition, args)   
         
         % one argument at most
         if numel(args) == 1
             setting = str2num(args{1});
         else
-            error('AttackToActuator: this class needs 1 argument only.');
+            error('AttackOnActuator: this class needs 1 argument only.');
         end
         
         % call superclass constructor

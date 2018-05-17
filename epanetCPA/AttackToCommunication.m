@@ -1,4 +1,4 @@
-classdef AttackToCommunication < CyberPhysicalAttack   
+classdef AttackOnCommunication < CyberPhysicalAttack   
     % Class for attack targeting a communication channel between cyber components.
     
     properties        
@@ -24,14 +24,14 @@ classdef AttackToCommunication < CyberPhysicalAttack
     % public methods
     methods
         
-    function self = AttackToCommunication(...
+    function self = AttackOnCommunication(...
             str, ini_condition, end_condition, args)
         
         % parse str (sender-target-receiver)
         temp = regexp(str,'-','split');
         if numel(temp)~= 3
             % raise error
-            error('AttackToCommunication: need to correctly specify sender-target-receiver.');
+            error('AttackOnCommunication: need to correctly specify sender-target-receiver.');
         else
             sender = temp{1}; target = temp{2}; receiver = temp{3};
         end
@@ -42,21 +42,21 @@ classdef AttackToCommunication < CyberPhysicalAttack
         switch alterMethod
             case 'DoS'         
                 if numel(args) > 1
-                    error('Too many arguments for <DoS> AttackToCommunication')
+                    error('Too many arguments for <DoS> AttackOnCommunication')
                 end                
             case 'constant'
                 % subsitute reading with a constant value
                 if numel(args) == 2
                     setting = str2num(args{2});
                 else
-                    error('Wrong number of arguments for <constant> AttackToCommunication')                    
+                    error('Wrong number of arguments for <constant> AttackOnCommunication')                    
                 end
             case 'offset'                
                 % adds offset to reading
                 if numel(args) == 2
                     setting = str2num(args{2});
                 else
-                    error('Wrong number of arguments for <offset> AttackToCommunication')
+                    error('Wrong number of arguments for <offset> AttackOnCommunication')
                 end        
             case 'custom'                
                 % substitute with custom readings
@@ -64,16 +64,16 @@ classdef AttackToCommunication < CyberPhysicalAttack
                     % check if file exists
                     filename = args{2};                    
                     if ~exist(filename, 'file')
-                        error(' AttackToCommunication: File containing custom altered readings cannot be found!')
+                        error(' AttackOnCommunication: File containing custom altered readings cannot be found!')
                     end
                     setting = csvread(filename);
                 else
-                    error('Wrong number of arguments for <custom> AttackToCommunication')
+                    error('Wrong number of arguments for <custom> AttackOnCommunication')
                 end
             case 'replay'
                 % replay attack
                 if numel(args) ~= 5
-                    error('Wrong number of arguments for <replay> AttackToCommunication')
+                    error('Wrong number of arguments for <replay> AttackOnCommunication')
                 else
                     setting(1) = str2num(args{2});
                     setting(2) = str2num(args{3});
@@ -156,13 +156,13 @@ classdef AttackToCommunication < CyberPhysicalAttack
         
         % check if sender and receiver are the same
         if strcmp(self.sender,self.receiver) == 1
-            error('AttackToCommunication: sender and receiver cannot be the same.');
+            error('AttackOnCommunication: sender and receiver cannot be the same.');
         end
         
         % check if target exists
         if sum(ismember(PLCs.sensors,self.target)) +...
                 sum(ismember(PLCs.actuators,self.target)) == 0
-            error('AttackToCommunication: target %s does not exist.', self.target);            
+            error('AttackOnCommunication: target %s does not exist.', self.target);            
         else
             self.targetIsSensor = sum(ismember(PLCs.sensors,self.target))==1;
         end
@@ -172,11 +172,11 @@ classdef AttackToCommunication < CyberPhysicalAttack
         ixSender    = find(ismember({PLCs.systems.name},self.sender));
         ixReceiver  = find(ismember({PLCs.systems.name},self.receiver));
         if isempty(ixSender) && ~strcmp(self.sender,'PHY')
-            error('AttackToCommunication: sender %s does not exist.', self.sender);
+            error('AttackOnCommunication: sender %s does not exist.', self.sender);
         end
         
         if isempty(ixReceiver) && ~strcmp(self.receiver,'PHY')
-            error('AttackToCommunication: receiver %s does not exist.', self.receiver);
+            error('AttackOnCommunication: receiver %s does not exist.', self.receiver);
         end
         
         if self.targetIsSensor
@@ -184,17 +184,17 @@ classdef AttackToCommunication < CyberPhysicalAttack
             if strcmp(self.sender,'PHY')
                 % receiver must have sensor in his sensor list
                 if sum(ismember(PLCs.systems(ixReceiver).sensors,self.target)) == 0
-                    error('AttackToCommunication: receiver %s is not linked to %s sensor.',...
+                    error('AttackOnCommunication: receiver %s is not linked to %s sensor.',...
                         self.receiver, self.target);
                 end            
             else
                 % receiver must have sensor in his sensorsIn list
                 if sum(ismember(PLCs.systems(ixReceiver).sensorsIn,self.target)) == 0
-                    error('AttackToCommunication: receiver %s is not linked to %s sensor.',...
+                    error('AttackOnCommunication: receiver %s is not linked to %s sensor.',...
                         self.receiver, self.target);
                 % and sender has to read the sensor                
                 elseif sum(ismember(PLCs.systems(ixSender).sensors,self.target)) == 0
-                    error('AttackToCommunication: sender %s is not directly linked to %s sensor.',...
+                    error('AttackOnCommunication: sender %s is not directly linked to %s sensor.',...
                         self.sender, self.target);                        
                 end
 				% TO DO: what to do if target is in sensorsIn of sender? 
@@ -204,7 +204,7 @@ classdef AttackToCommunication < CyberPhysicalAttack
             if strcmp(self.receiver,'PHY')
                 % sender must have actuator in his actuator list
                 if sum(ismember(PLCs.systems(ixSender).actuators,self.target)) == 0
-                    error('AttackToCommunication: sender %s is not linked to %s actuator.',...
+                    error('AttackOnCommunication: sender %s is not linked to %s actuator.',...
                         self.sender, self.target);
                 end  
                 
@@ -212,12 +212,12 @@ classdef AttackToCommunication < CyberPhysicalAttack
 				% other alterMethods are not available when target is an actuator
 				% TO DO: currently we do not check if "constant" values are between 0 and 1
                 if sum(ismember({'DoS','constant'},self.alterMethod)) == 0
-                    error(['AttackToCommunication: outgoing communications',...
+                    error(['AttackOnCommunication: outgoing communications',...
                         'to actuators can only be DoS-ed or altered with a constant value [0 or 1].']);
                 elseif strcmp('constant', self.alterMethod)
                     % check if values are 0 or 1
                     if self.setting~=0 && self.setting~=1
-                        error(['AttackToCommunication: outgoing communications',...
+                        error(['AttackOnCommunication: outgoing communications',...
                             ' to actuators can only be altered with 0 or 1'])
                     end
                 end
@@ -229,12 +229,12 @@ classdef AttackToCommunication < CyberPhysicalAttack
                 
                 % sender must have actuator in his actuator list
                 if sum(ismember(PLCs.systems(ixSender).actuators,self.target)) == 0
-                    error('AttackToCommunication: sender %s is not linked to %s actuator.',...
+                    error('AttackOnCommunication: sender %s is not linked to %s actuator.',...
                         self.sender, self.target);
                 end  
             else
                 % receiver must be PHY or SCADA
-                error('AttackToCommunication: if target is an actuator, receiver can only be PHY or SCADA.')        
+                error('AttackOnCommunication: if target is an actuator, receiver can only be PHY or SCADA.')        
             end
         end        
     end
@@ -318,7 +318,7 @@ classdef AttackToCommunication < CyberPhysicalAttack
             % Otherwise is replaced with constant value (0, 1, or anything in between)
         end
         % Alter transmission from controller to actuator                
-        % (works like AttackToActuator)                    
+        % (works like AttackOnActuator)                    
 
         % get dummy controls
         dummyControls = epanetSim.epanetMap.dummyControls;

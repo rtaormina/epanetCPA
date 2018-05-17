@@ -367,7 +367,7 @@ classdef EpanetCPA
         attacks = cell(1,nAttacks);
         for i = 1 : nAttacks
             thisAttack = cyberattacks(i);
-            eval_string = sprintf(['attacks{%d} = AttackTo%s('...
+            eval_string = sprintf(['attacks{%d} = AttackOn%s('...
                 'thisAttack.target,thisAttack.init_cond,thisAttack.end_cond,thisAttack.arguments);'],i,thisAttack.type);
             evalc(eval_string);
         end

@@ -50,8 +50,8 @@ classdef EpanetCPASimulation
         for i = 1 : numel(self.attacks)           
             if ismethod(self.attacks{i}, 'validateAttack')                
                 % check for attack where validation has been enabled
-                if isa(self.attacks{i},'AttackToCommunication')
-                    % if AttackToCommunication we need to send systems
+                if isa(self.attacks{i},'AttackOnCommunication')
+                    % if AttackOnCommunication we need to send systems
                     self.attacks{i} = self.attacks{i}.validateAttack(self.epanetMap.cyberlayer);
                 end
             else
@@ -270,10 +270,10 @@ classdef EpanetCPASimulation
             [attack, self] = self.attacks{i}.evaluateAttack(self);
             
             % alter readings if attack is in place and alters readings,
-            % i.e. AttackToSensor & AttackToCommunication.
+            % i.e. AttackOnSensor & AttackOnCommunication.
             attackAltersReading = isprop(attack,'alteredReading');
-            if isa(attack,'AttackToCommunicationNew') && ~attack.targetIsSensor 
-                % readings are not altered if AttackToCommunication targets
+            if isa(attack,'AttackOnCommunicationNew') && ~attack.targetIsSensor 
+                % readings are not altered if AttackOnCommunication targets
                 % incoming actuator transmission.
                 attackAltersReading = false;
             end

@@ -123,6 +123,7 @@ classdef EpanetControl
         end
         
         % create variable from dictionary
+		% TO DO: remove this check when fully tested!
         try
             eval(sprintf('%s = symbolDict(''%s'');', thisSensor, thisSensor));
         catch

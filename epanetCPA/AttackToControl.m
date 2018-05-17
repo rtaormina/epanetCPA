@@ -1,4 +1,4 @@
-classdef AttackToControl < CyberPhysicalAttack   
+classdef AttackOnControl < CyberPhysicalAttack   
     % Class implementing attack changing control logic.
         
     properties                
@@ -11,7 +11,7 @@ classdef AttackToControl < CyberPhysicalAttack
     methods
         
     % constructor
-    function self = AttackToControl(...
+    function self = AttackOnControl(...
             target, ini_condition, end_condition, args)
         % get the attack target
         % it comes as a string of the format "CTRLxt"
@@ -27,7 +27,7 @@ classdef AttackToControl < CyberPhysicalAttack
         end
         
         if numel(args)>1
-            error('Wrong number of arguments specified for AttackToControl');
+            error('Wrong number of arguments specified for AttackOnControl');
         else
             setting = str2num(args{1});
         end

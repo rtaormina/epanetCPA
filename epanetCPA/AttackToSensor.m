@@ -1,4 +1,4 @@
-classdef AttackToSensor < CyberPhysicalAttack   
+classdef AttackOnSensor < CyberPhysicalAttack   
     % Class implementing a physical attack to a Sensor.
     
     properties           
@@ -9,7 +9,7 @@ classdef AttackToSensor < CyberPhysicalAttack
     % public methods
     methods
     
-    function self = AttackToSensor(...
+    function self = AttackOnSensor(...
             target, ini_condition, end_condition, args)
         
         % handle args
@@ -19,19 +19,19 @@ classdef AttackToSensor < CyberPhysicalAttack
             case 'DoS'
                 % sensor returns last trainsmitted reading
                 if numel(args) > 1
-                    error('Too many arguments for <DoS> AttackToSensor')
+                    error('Too many arguments for <DoS> AttackOnSensor')
                 end                
             case 'constant'
                 % subsitute reading with a constant value
                 if numel(args) > 2
-                    error('Too many arguments for <constant> AttackToSensor')
+                    error('Too many arguments for <constant> AttackOnSensor')
                 else
                     setting = str2num(args{2});
                 end                
             case 'offset'                
                 % adds offset to reading
                 if numel(args) > 2
-                    error('Too many arguments for <offset> AttackToSensor')
+                    error('Too many arguments for <offset> AttackOnSensor')
                 else
                     setting = str2num(args{2});
                 end        
@@ -41,11 +41,11 @@ classdef AttackToSensor < CyberPhysicalAttack
                     % check if file exists
                     filename = args{2};                    
                     if ~exist(filename, 'file')
-                        error(' AttackToSensor: File containing custom altered readings cannot be found!')
+                        error(' AttackOnSensor: File containing custom altered readings cannot be found!')
                     end
                     setting = csvread(filename);
                 else
-                    error('Wrong number of arguments for <custom> AttackToSensor')
+                    error('Wrong number of arguments for <custom> AttackOnSensor')
                 end                
             otherwise
                 error('not implemented yet!')
