@@ -26,7 +26,7 @@ Taormina, R., Galelli, S., Tippenhauer, N. O., Salomons, E., & Ostfeld, A. (2017
 2. *scenario02.cpa*&nbsp;&nbsp;&nbsp;&nbsp; Same as *scenario01* but run using the pressure driven engine to obtain more reliable results. 
 3. *scenario03.cpa*&nbsp;&nbsp;&nbsp;&nbsp; The attacker modifies the control logic of PLC5 so that some of the controlled pumps (PU10, PU11) switch on/off intermittently.
 4. *scenario04.cpa*&nbsp;&nbsp;&nbsp;&nbsp;  Denial-of-service of the connection link between PLC2 and PLC1. PLC1 fails to receive updated readings of T1 water level and keeps the pumps (PU1,PU2) ON. This causes a surge in the tank T1.
-5. *scenario04.cpa*&nbsp;&nbsp;&nbsp;&nbsp;   Same as *scenario04* but this time the attacker conceals the tanks surge from SCADA with a replay attack on the connection link between PLC2 and SCADA.
+5. *scenario04.cpa*&nbsp;&nbsp;&nbsp;&nbsp;   Same as *scenario04* but this time the attacker conceals the tanks surge from SCADA by altering the data sent by PLC2 to SCADA.
 
 ### Authors
 Riccardo Taormina is the main developer of epanetCPA. The core of the pressure driven engine was developed by Hunter C. Douglas.
