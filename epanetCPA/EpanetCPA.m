@@ -339,7 +339,7 @@ classdef EpanetCPA
                                 if nsep > 1
                                     error('Problem with format of %s cyberoption.',option);                                    
                                 else
-                                    filename = text(temp(1):end);
+                                    filename = strtrim(text(temp(1):end));
                                     cyberoptions.patterns = csvread(filename);                                    
                                 end    
                             case 'pda_options'
