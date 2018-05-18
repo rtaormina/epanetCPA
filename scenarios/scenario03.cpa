@@ -1,0 +1,27 @@
+[CYBERNODES]
+; Name Sensors Actuators
+ PLC1		PU1, PU2, PU3
+ PLC2	T1
+ PLC3	T2	PU4, PU5, PU6, PU7, V2
+ PLC4	T3
+ PLC5		PU8, PU9, PU10, PU11
+ PLC6	T4
+ PLC7	T5
+ PLC8	T6
+ PLC9	T7
+; SCADA
+
+[CYBERATTACKS]
+; Type	Target	Init_cond	End_cond	Arguments
+; The attacker modifies the control logic of PLC5 so that some of the controlled pumps (PU10, PU11) switch on/off intermittently.
+Control	CTRL17n	TIME==30	TIME==35	3
+Control	CTRL18n	TIME==30	TIME==35	3.1
+Control	CTRL19n	TIME==30	TIME==35	3
+Control	CTRL20n	TIME==30	TIME==35	3.1
+
+[CYBEROPTIONS]
+verbosity	1
+what_to_store	T1, T2, T3, T4, T5, T6, T7, PU1, PU2, PU3, J269, J280	PRESSURE	FLOW
+initial_conditions	4,3.75,3.25,3.75,3.5,3.5,3
+patterns_file	./patterns.csv
+what_to_store	T1, T2, T3, T4, T5, T6, T7, PU10, PU11, J317, J307	PRESSURE	FLOW

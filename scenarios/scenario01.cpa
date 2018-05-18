@@ -1,0 +1,23 @@
+[CYBERNODES]
+; Name Sensors Actuators
+ PLC1		PU1, PU2, PU3
+ PLC2	T1
+ PLC3	T2	PU4, PU5, PU6, PU7, V2
+ PLC4	T3
+ PLC5		PU8, PU9, PU10, PU11
+ PLC6	T4
+ PLC7	T5
+ PLC8	T6
+ PLC9	T7
+; SCADA
+
+[CYBERATTACKS]
+; Type	Target	Init_cond	End_cond	Arguments
+; Attack on communication link between T2 water level sensor and PLC3. A constant (HIGH) value of 5.6 meters ; is injected, leading PLC3 to close valve V2. Tank T2 empties and network is disconnected.
+Communication	PHY-T2-PLC3	TIME==10	TIME==20	constant, 5.6
+
+[CYBEROPTIONS]
+verbosity	1
+what_to_store	T1, T2, T3, T4, T5, T6, T7, PU1, PU2, PU3, J269, J280	PRESSURE	FLOW
+initial_conditions	4,3.75,3.25,3.75,3.5,3.5,3
+patterns_file	./patterns.csv
