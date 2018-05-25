@@ -10,7 +10,8 @@ Taormina, R., Galelli, S., Tippenhauer, N. O., Salomons, E., & Ostfeld, A. (2017
 ### Requirements:
 1. **EPANET2.0**&nbsp;&nbsp;&nbsp;&nbsp;If you are runinng on a 32bit OS please download the EPANET2 Programmer's Toolkit from the [EPA website](https://www.epa.gov/water-research/epanet), and substitute the epanet2.h, epanet2.lib and epanet2.dll files in your local epanetCPA folder. Compiled librarires for a 64bit machine are included in the repository. These libraries can also be found [here](http://epanet.de/developer/64bit.html.en).
 
-2. **MATLAB**&nbsp;&nbsp;&nbsp;&nbsp;The toolbox has been tested on MATLAB® R2014b, and it should work for later versions. Feedback on using epanetCPA with other versions of MATLAB is greatly appreciated. Please contact riccardo.taormina@gmail.com to provide your feedback.
+2. **MATLAB**&nbsp;&nbsp;&nbsp;&nbsp;The toolbox has been tested on MATLAB® R2014b, and it should work for later versions. Make sure that C++ compilers (e.g. Windows SDK 7.1 for MATLAB® R2014b) are installed and interfaced with MATLAB® so that dlls can be invoked.
+Feedback on using epanetCPA with other versions of MATLAB is greatly appreciated. Please contact riccardo.taormina@gmail.com to provide your feedback.
 
 3. **PYTHON**&nbsp;&nbsp;&nbsp;&nbsp;You need PYTHON installed only if you want to employ the provided IPython (Jupyter) notebook provided here for visualizing the results. If that is the case, please install the PYTHON modules required, reported at the beginning of the notebook.
 
