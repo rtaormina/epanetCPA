@@ -296,7 +296,7 @@ classdef EpanetCPA
                             case 'verbosity'
                                 % after how many steps do you want echo on
                                 % screen?
-                                cyberoptions.verbosity = str2num(text(temp(1):end));
+                                cyberoptions.verbosity = str2double(text(temp(1):end));
                             case 'what_to_store'                                
                                 % which nodes/links and variables to store?
 %                                 if nsep == 1
@@ -326,7 +326,7 @@ classdef EpanetCPA
                                 else
                                     temp = regexp(strtrim(text(temp(1):end)),',','split');
                                     for k = 1 : numel(temp)
-                                        cyberoptions.initial_conditions(k) = str2num(temp{k});
+                                        cyberoptions.initial_conditions(k) = str2double(temp{k});
                                     end
                                 end
                             case 'patterns_file'
@@ -346,9 +346,9 @@ classdef EpanetCPA
                                 if nsep ~= 4
                                     error('Problem with format of %s cyberoption.',option);                                    
                                 else
-                                    pda_options.emitterExponent = str2num(text(temp(1):temp(2)));
-                                    pda_options.Pmin = str2num(text(temp(2):temp(3)));
-                                    pda_options.Pdes = str2num(text(temp(3):temp(4)));
+                                    pda_options.emitterExponent = str2double(text(temp(1):temp(2)));
+                                    pda_options.Pmin = str2double(text(temp(2):temp(3)));
+                                    pda_options.Pdes = str2double(text(temp(3):temp(4)));
                                     pda_options.HFR = strtrim(text(temp(4):end));
                                     cyberoptions.pda_options = pda_options;                                    
                                 end 
