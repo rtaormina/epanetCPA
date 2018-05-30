@@ -188,7 +188,8 @@ classdef EpanetCPASimulation
         while tstep && ~errorcode 
 
             TIME = double(self.simTime)/HOURS_TO_SECONDS;
-            if (TIME>0) && mod(TIME,self.display_every)<=0.00001% TODO: make this clearer
+            %if (TIME>0) && mod(TIME,self.display_every)<=0.00001% TODO: make this clearer
+	    if not(mod(TIME,self.display_every))
                 echoString = sprintf('TIME: %.3f\n',TIME);
                 fprintf(echoString);
             end 
@@ -210,7 +211,9 @@ classdef EpanetCPASimulation
             [errorcode, tstep] = calllib('epanet2', 'ENnextH', tstep);
             self.tstep = tstep;
         end
-        
+        echoString = sprintf('TIME: %.3f\n',TIME); % Display last time step
+      	fprintf(echoString);
+	
         % close simulation
         EpanetHelper.epanetclose();
     end
