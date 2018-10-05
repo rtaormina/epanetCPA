@@ -113,7 +113,7 @@ classdef EpanetControl
                 % get sensor ID
                 thisSensor = 'TIME';       
                 overrideControlString = sprintf('symbolDict(''TIME'') == %d;',...
-                    self.nSetting*HOURS_TO_SECONDS);
+                    self.nSetting/HOURS_TO_SECONDS);
             case 3
                 % CLOCKTIME
                 % create string

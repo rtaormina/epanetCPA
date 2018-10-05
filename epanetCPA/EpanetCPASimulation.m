@@ -28,6 +28,8 @@ classdef EpanetCPASimulation
                 
         patternStepLength   % step length of demand pattern
         
+        dds         % NEW FOR OPTIMISIMUL desider demands cell array
+        
     end
     
     
@@ -41,7 +43,11 @@ classdef EpanetCPASimulation
         self.epanetMap      = epanetMap;
         self.attacks        = attacks; 
         self.display_every  = cyberoptions.verbosity;
-        self.whatToStore    = cyberoptions.what_to_store;        
+        self.whatToStore    = cyberoptions.what_to_store;      
+        
+        %% NEW FOR OPTIMISIMUL
+        % store desired demand to compute unmet demands    
+        self.dds = {};
         
         % load map file
         EpanetHelper.epanetloadfile(self.epanetMap.modifiedFilePath);
@@ -195,7 +201,8 @@ classdef EpanetCPASimulation
             
             % update component settings (for pda)
             if self.epanetMap.usePDA
-                self.updateComponentSettings();
+                %% NEW FOR OPTIMISIMUL
+                self = self.updateComponentSettings();
             end
 
             % run hydraulic simulation step
@@ -627,7 +634,10 @@ classdef EpanetCPASimulation
         % get pattern length
         patterns = self.epanetMap.patterns;
         [P_length,~] = size(patterns);
-
+        
+        %% NEW FOR OPTIMISIMUL
+        % store desired demand to compute unmet demands       
+        dd = containers.Map();
         for i = 1:length(junctions)
             thisJunction = junctions{i};
 
@@ -665,7 +675,16 @@ classdef EpanetCPASimulation
             %set emitter coefficient value
             EpanetHelper.setComponentValue(...
                 emitter_ix,emitter_coef,EpanetHelper.EPANETCODES('EN_EMITTER'));	
+            
+            %% NEW FOR OPTIMISIMUL
+            % store desired demand to compute unmet demands
+            dd(thisJunction) = FCV_setting;            
         end
+        
+        %% NEW FOR OPTIMISIMUL
+        % concatenate des_demands
+        self.dds = cat(1,self.dds,{dd});
+        
     end	
     
     function eCoef = calcEmitterCoef(self,demand,emitter_ix) 
