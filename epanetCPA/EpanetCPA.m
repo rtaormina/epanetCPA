@@ -161,7 +161,7 @@ classdef EpanetCPA
                     % TO DO: should IDEALLY raise error if first line doesn't start with ; (header)                
 
                     if size(section_text,1) == 1
-                        % EXIT< no cybernodes has been defined
+                        % EXIT< no cybernodes have been defined
                         error('ERROR: no cybernodes defined in %s. Did you include the header for this section?', cpaFile)
                     end
 
@@ -196,28 +196,13 @@ classdef EpanetCPA
                                     temp(nsep+1:3) = length(section_text{j});
                                 end
 
-                                % get sensors...
-                                sensors = strtrim(section_text{j}(temp(1):temp(2)));
-                                
-                                if ~isempty(sensors)
-                                    sensors = regexp(sensors,',','split');
-                                end
-                                
-                                for k = 1 : numel(sensors)
-                                    thisNode.sensors(k) = strtrim(sensors(k));
-                                end
+                                % get sensors...                                
+                                sensors = section_text{j}(temp(1):temp(2));
+                                thisNode.sensors = strsplit(sensors(~isspace(sensors)),',');
                                 
                                 % ... actuators...
-                                if temp(2) ~= length(section_text{j})
-                                    actuators = strtrim(section_text{j}(temp(2):end));
-                                    if ~isempty(actuators)
-                                        actuators = regexp(actuators,',','split');
-                                    end        
-                                    
-                                    for k = 1 : numel(actuators)
-                                        thisNode.actuators(k) = strtrim(actuators(k));
-                                    end
-                                end
+                                actuators = section_text{j}(temp(2):end);
+                                thisNode.actuators = strsplit(actuators(~isspace(actuators)),',');
                                 
                                 % concatenate
                                 cybernodes = cat(1,cybernodes,thisNode);
@@ -226,7 +211,40 @@ classdef EpanetCPA
                     end
                     
                 case 'CYBERLINKS'            
-                    warning('THIS WILL BE REMOVED!')
+                    
+                    if size(section_text,1) == 1
+                        % EXIT< no cyberlinks have been defined
+                        error('ERROR: no cyberlinks defined in %s. Did you include the header for this section?', cpaFile)
+                    end
+                    
+                    % initialize array of cyberlinks
+                    cyberlinks = [];
+                    % loop through all cybernodes
+                    for j = 2 : size(section_text,1)
+
+                        % check if comment first...
+                        temp = strtrim(section_text{j});
+                        if temp(1)~= ';'
+                            % get \t separator positions
+                            temp = regexp(section_text{j},'\t');
+                            nsep = numel(temp);                            
+                            if isempty(temp)
+                                error('Cyberlink string %d in %s file has no details.', j-1, self.cpaFile);
+                            elseif nsep > 2                                
+                                error('Problem with format of cyberlink string %d in %s file. Check README.md',...
+                                    j-1, self.cpaFile);                                                            
+                            else
+
+                                % initialize cybernode struct
+                                thisLink.sender = strtrim(section_text{j}(1:temp(1)));
+                                thisLink.receiver = strtrim(section_text{j}(temp(1):temp(2)));
+                                thisLink.signals  = strsplit(strtrim(section_text{j}(temp(2):end)),',');
+                                
+                                % concatenate
+                                cyberlinks = cat(1,cyberlinks,thisLink);
+                            end
+                        end                        
+                    end
 
                 case 'CYBERATTACKS'            
                     % TO DO: should IDEALLY raise error if first line doesn't start with ; (header)                
