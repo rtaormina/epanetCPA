@@ -44,7 +44,8 @@ classdef Controller < matlab.mixin.Heterogeneous
                 thisSensor = EpanetHelper.getComponentId(controls(i).nIndex, 1);
                 if ~ismember(thisSensor, self.sensors)
                     % is coming from another controller, add to sensorsIn
-                    self.sensorsIn = cat(2, self.sensorsIn, thisSensor);            
+                    % (add P_ since we have water levels and pressures)
+                    self.sensorsIn = cat(2, self.sensorsIn, ['P_',thisSensor]);            
                 end                
             end
         end

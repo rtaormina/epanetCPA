@@ -246,7 +246,10 @@ classdef EpanetCPASimulation
             % sensors read            
             sensors = cat(2,systems(j).sensors,systems(j).sensorsIn);
             for k = 1 : numel(sensors)
+                % remove previx (P_, F_ or S_...)
                 sensor = sensors{k};
+                sensor = regexp(sensor,'_','split');
+                sensor = sensor{2};
                 try
                     reading = self.symbolDict(sensor);
                     eval(sprintf('%sdict(sensor) = reading;',controllerName));
@@ -292,7 +295,10 @@ classdef EpanetCPASimulation
                 
                 % get layer and target
                 layer  = attack.layer;
-                target = attack.target;
+                % (first remove prefix from target)
+                temp = regexp(attack.target,'_','split');
+                target = temp{2}; 
+        
                 alteredReading = attack.alteredReading;
                 
                 % create new entry for altered readings
@@ -503,6 +509,7 @@ classdef EpanetCPASimulation
         end
         
         % put component symbols in dictionary for each control
+        % TO DO: need to avoid multiple check of the same sensors!
         for i = 1 : numel(self.epanetMap.controls)
             % get the control sensor ID
             thisSensor = EpanetHelper.getComponentId(self.epanetMap.controls(i).nIndex, 1);       
@@ -510,7 +517,7 @@ classdef EpanetCPASimulation
             if self.epanetMap.controls(i).nIndex > 0
                 eval(sprintf('self.symbolDict(''%s'') = EpanetHelper.getComponentValueForAttacks(''%s'');',...
                     thisSensor,thisSensor));
-            end                    
+            end
         end
         
         
@@ -599,12 +606,15 @@ classdef EpanetCPASimulation
     end
     
     function self = storeAlteredReadingEntry(self, layer, target, alteredReading)  
+
         % creates and store new entry for altered readings
         thisEntry.time     = self.T(end);
         thisEntry.layer    = layer;
         thisEntry.sensorId = target;
         thisEntry.reading  = alteredReading;    
-        % check if node or link to see if reading is pressure or flow
+        
+        % check if target is node or link to see if reading is pressure or flow              
+       
         [~, ~, isNode] = EpanetHelper.getComponentIndex(target);
         if isNode
             thisEntry.variable = 'PRESSURE';

@@ -10,6 +10,7 @@ classdef EpanetCPA
         cpaFile    % .cpa file with info on cyber layer and attacks;
         
         cybernodes      % stores info on cyber network of sensors, actuators, plcs and SCADA
+        cyberlinks      % stores info on links between cybernodes
         cyberattacks    % list of cyber-physical attacks featured in the simulation
         cyberoptions    % options for epanetCPA run
     end
@@ -57,7 +58,7 @@ classdef EpanetCPA
         [ATTACKS_ENABLED, PDA_ENABLED] = optargs{:};
         
         % create Map
-        theMap = EpanetCPAMap(inpFile, self.cybernodes, self.cyberoptions, PDA_ENABLED);                
+        theMap = EpanetCPAMap(inpFile, self.cybernodes, self.cyberlinks, self.cyberoptions, PDA_ENABLED);                
 
         if ATTACKS_ENABLED
             % create and run simulation with attacks
@@ -223,7 +224,7 @@ classdef EpanetCPA
                     for j = 2 : size(section_text,1)
 
                         % check if comment first...
-                        temp = strtrim(section_text{j});
+                        temp = strtrim(section_text{j});   
                         if temp(1)~= ';'
                             % get \t separator positions
                             temp = regexp(section_text{j},'\t');
@@ -239,7 +240,7 @@ classdef EpanetCPA
                                 thisLink.sender = strtrim(section_text{j}(1:temp(1)));
                                 thisLink.receiver = strtrim(section_text{j}(temp(1):temp(2)));
                                 thisLink.signals  = strsplit(strtrim(section_text{j}(temp(2):end)),',');
-                                
+
                                 % concatenate
                                 cyberlinks = cat(1,cyberlinks,thisLink);
                             end
@@ -400,6 +401,7 @@ classdef EpanetCPA
 
         % return
         self.cybernodes     = cybernodes;
+        self.cyberlinks     = cyberlinks;
         self.cyberattacks   = cyberattacks;
         self.cyberoptions   = cyberoptions;
         optargs = {~isempty(cyberattacks),~isempty(cyberoptions.pda_options)};

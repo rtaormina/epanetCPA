@@ -12,7 +12,7 @@ inpFilePath = 'minitown_map.inp';
 % Define scenario
 scenarioFolder = './scenarios/minitown/';
 cpaFilePath = 'minitown_attack.cpa';
-noAttackCpaFile = 'minitown_no_attacks.cpa'
+noAttackCpaFile = 'minitown_no_attacks.cpa';
 exp_name = cpaFilePath(1:strfind(cpaFilePath,'.cpa')-1);
 
 

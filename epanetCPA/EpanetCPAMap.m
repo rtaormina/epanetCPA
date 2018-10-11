@@ -36,7 +36,7 @@ classdef EpanetCPAMap
     % public methods
     methods
         
-    function self = EpanetCPAMap(mapFile, cybernodes, cyberoptions, PDA_ENABLED)
+    function self = EpanetCPAMap(mapFile, cybernodes, cyberlinks, cyberoptions, PDA_ENABLED)
 
         % original map file
         self.originalFilePath = mapFile; 
@@ -66,7 +66,7 @@ classdef EpanetCPAMap
         self = self.getControls();
           
         % create cyber layer
-        self = self.createCyberLayer(cybernodes);       
+        self = self.createCyberLayer(cybernodes, cyberlinks);       
                 
         % close modified .inp file
         EpanetHelper.epanetclose();        
@@ -216,7 +216,7 @@ classdef EpanetCPAMap
                 
     end  
     
-    function self = createCyberLayer(self, cybernodes)
+    function self = createCyberLayer(self, cybernodes, cyberlinks)
         % check for duplicate cybernodes
         if isequal(unique([cybernodes.name]), sort([cybernodes.name]))
             error('Duplicate names in cybernodes. Check your .cpa file.')
@@ -228,7 +228,6 @@ classdef EpanetCPAMap
             scadaIndex = -1;
             warning(['SCADA cybernode not found. Adding SCADA node']);         
         end
-
 
         % check PLC names
         for i = 1 :numel(cybernodes)    
@@ -245,10 +244,11 @@ classdef EpanetCPAMap
             isequal(unique([cybernodes.actuators]), sort([cybernodes.actuators]))
 
             % ... now get all actuators and sensors in controls
+            % (add P to water evels and pressures)
             sensors   = {}; actuators = {};
             for i = 1 : numel(self.controls)
                 sensors = cat(2,sensors,...
-                    EpanetHelper.getComponentId(self.controls(i).nIndex, 1));
+                    ['P_',EpanetHelper.getComponentId(self.controls(i).nIndex, 1)]);
                 actuators = cat(2,actuators,...
                     EpanetHelper.getComponentId(self.controls(i).lIndex, 0));
             end
@@ -284,6 +284,20 @@ classdef EpanetCPAMap
             self.cyberlayer.systems = cat(1,self.cyberlayer.systems,...
                 SCADA(cybernodes(scadaIndex),self.controls,self.cyberlayer.sensors));    
         end
+        
+        % create cyberlinks
+        temp = [];
+        for i = 1 : numel(cyberlinks)
+            thisLink = cyberlinks(i);          
+            cyberlinkInfo.sender = thisLink.sender;
+            cyberlinkInfo.receiver = thisLink.receiver;
+            for j = 1 : numel(thisLink.signals)
+                cyberlinkInfo.signal = thisLink.signals{j};
+                temp = [temp, Cyberlink(cyberlinkInfo)];
+            end
+        end
+        
+        
 
  
     end

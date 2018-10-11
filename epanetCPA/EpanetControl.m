@@ -127,7 +127,7 @@ classdef EpanetControl
         try
             eval(sprintf('%s = symbolDict(''%s'');', thisSensor, thisSensor));
         catch
-            disp('muuuh')
+            error('Failed creating variable from dictionary.')
         end
 
         % eval string and perform action

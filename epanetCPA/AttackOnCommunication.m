@@ -343,8 +343,16 @@ classdef AttackOnCommunication < CyberPhysicalAttack
     function thisReading = getReading(self, rowToCopyFrom, epanetSim)
         time = epanetSim.T(rowToCopyFrom);
 
-        % get attacked component and index
-        thisComponent = self.target;
+        % get attacked component and index        
+        thisComponent = self.target;      
+        % remove prefix
+        temp = regexp(thisComponent,'_','split');
+        if ~ismember(temp{1},'PF')
+            error('Attacks targeting %s not implemented yet.',temp{1});
+        end
+        thisComponent = temp{2};
+        
+        
         [thisIndex,~,isNode] = EpanetHelper.getComponentIndex(thisComponent);
 
         if isNode

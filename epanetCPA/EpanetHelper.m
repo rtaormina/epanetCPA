@@ -534,7 +534,6 @@ classdef EpanetHelper
     
     function [index,errorcode,isNode] = getComponentIndex(id)
         % Get the index of an EPANET component, whether node or link
-
         isNode = true;
         [errorcode,id,index] = calllib('epanet2', 'ENgetnodeindex', id, 0);
 
@@ -602,9 +601,16 @@ classdef EpanetHelper
             % returns sensor reading for selected component 
             % i.e. Tank = water level, Pipe = flow rate, junction = pressure
             
-            % get index and type
+            % remove prefix
+            [id, temp] = regexp(id,'_','split');
+            if ~isempty(temp)
+                id = id{2};
+            else            
+                id = id{1};
+            end
+            % get index and type            
             [index,errorcode,isNode] = EpanetHelper.getComponentIndex(id);
-
+            
             if ~errorcode
                 % check if is a node or link
                 if isNode
