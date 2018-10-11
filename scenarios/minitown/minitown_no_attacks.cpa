@@ -1,22 +1,20 @@
 [CYBERNODES]
-; Name Sensors Actuators
- PLC1	F_PU1, F_PU2, P_J269, P_J280	PU1, PU2
- PLC2	P_T1
+; Name, Sensors, Actuators
+ PLC1, F_PU1 F_PU2 P_J269 P_J280, PU1 PU2
+ PLC2, P_T1,
 ; SCADA
 
 [CYBERLINKS]
-; Source Destination Variables
- PLC1	SCADA	F_PU1, F_PU2, P_J269, P_J280
- PLC2	SCADA	P_T1
- PLC2	PLC1	P_T1
+; Source, Destination, Variables
+ PLC1, SCADA, F_PU1 F_PU2 P_J269 P_J280
+ PLC2, SCADA, P_T1
+ PLC2, PLC1, P_T1
 
 [CYBERATTACKS]
-; Type	Target	Init_cond	End_cond	Arguments
-; Denial-of-service of the connection link between PLC2 and PLC1. PLC1 fails to receive updated readings water level data for tank T1 and keeps the pumps (PU1,PU2) ON. This causes a surge in the tank T1.
-
+; Type,	Target,	Init_cond,	End_cond,	Arguments
 
 [CYBEROPTIONS]
-verbosity	1
-what_to_store	T1, PU1, PU2, J269, J280	PRESSURE	FLOW
-initial_conditions	4
-patterns_file	./minitown_patterns.csv
+verbosity, 1
+what_to_store,	T1 PU1 PU2 J269 J280, PRESSURE, FLOW
+initial_conditions, 4
+patterns_file, ./minitown_patterns.csv

@@ -295,11 +295,9 @@ classdef EpanetCPAMap
                 cyberlinkInfo.signal = thisLink.signals{j};
                 temp = [temp, Cyberlink(cyberlinkInfo)];
             end
-        end
-        
-        
+        end        
+        self.cyberlayer.cyberlinks = temp;
 
- 
     end
     
     function self = getAllComponents(self)

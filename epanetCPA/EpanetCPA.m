@@ -177,7 +177,7 @@ classdef EpanetCPA
                         temp = strtrim(section_text{j});
                         if temp(1)~= ';'
                             % get \t separator positions
-                            temp = regexp(section_text{j},'\t');
+                            temp = regexp(section_text{j},',');
                             nsep = numel(temp);                            
                             if isempty(temp)
                                 error('Cybernode string %d in %s file has no details.', j-1, self.cpaFile);
@@ -187,7 +187,7 @@ classdef EpanetCPA
                             else
 
                                 % initialize cybernode struct
-                                thisNode.name = strtrim(section_text{j}(1:temp(1)));
+                                thisNode.name = self.cleanField(section_text{j}(1:temp(1)));                                
                                 thisNode.sensors     = {};
                                 thisNode.actuators   = {};
 
@@ -197,13 +197,19 @@ classdef EpanetCPA
                                     temp(nsep+1:3) = length(section_text{j});
                                 end
 
-                                % get sensors...                                
-                                sensors = section_text{j}(temp(1):temp(2));
-                                thisNode.sensors = strsplit(sensors(~isspace(sensors)),',');
+                                % get sensors...  
+                                temp_ = self.cleanField(section_text{j}(temp(1):temp(2)));
+                                if ~iscell(temp_)
+                                    temp_ = {temp_};
+                                end
+                                thisNode.sensors = temp_;
                                 
                                 % ... actuators...
-                                actuators = section_text{j}(temp(2):end);
-                                thisNode.actuators = strsplit(actuators(~isspace(actuators)),',');
+                                temp_ = self.cleanField(section_text{j}(temp(2):end));
+                                if ~iscell(temp_)
+                                    temp_ = {temp_};
+                                end
+                                thisNode.actuators = temp_;
                                 
                                 % concatenate
                                 cybernodes = cat(1,cybernodes,thisNode);
@@ -227,7 +233,7 @@ classdef EpanetCPA
                         temp = strtrim(section_text{j});   
                         if temp(1)~= ';'
                             % get \t separator positions
-                            temp = regexp(section_text{j},'\t');
+                            temp = regexp(section_text{j},',');
                             nsep = numel(temp);                            
                             if isempty(temp)
                                 error('Cyberlink string %d in %s file has no details.', j-1, self.cpaFile);
@@ -236,11 +242,16 @@ classdef EpanetCPA
                                     j-1, self.cpaFile);                                                            
                             else
 
-                                % initialize cybernode struct
-                                thisLink.sender = strtrim(section_text{j}(1:temp(1)));
-                                thisLink.receiver = strtrim(section_text{j}(temp(1):temp(2)));
-                                thisLink.signals  = strsplit(strtrim(section_text{j}(temp(2):end)),',');
-
+                                % fill cyberlink struct
+                                thisLink.sender = self.cleanField(section_text{j}(1:temp(1)));
+                                thisLink.receiver = self.cleanField(section_text{j}(temp(1):temp(2)));
+                                
+                                temp_ = self.cleanField(section_text{j}(temp(2):end));
+                                if ~iscell(temp_)
+                                    temp_ = {temp_};
+                                end
+                                thisLink.signals = temp_;
+                                
                                 % concatenate
                                 cyberlinks = cat(1,cyberlinks,thisLink);
                             end
@@ -264,24 +275,36 @@ classdef EpanetCPA
                         temp = strtrim(section_text{j});
                         if temp(1)~= ';'
                             % get \t separator positions
-                            temp = regexp(section_text{j},'\t');
+                            temp = regexp(section_text{j},',');
                             nsep = numel(temp);
                             if nsep ~= 4
                                 disp(section_text{j}); 
                                 error('Problem with format of cyberattack %d string in %s file', j-1, self.cpaFile);
                             end
 
-                            % fill cybernode struct
+                            % fill cyberattack struct
                             text = section_text{j};
-                            thisAttack.type       = strtrim(text(1:temp(1)));   
-                            thisAttack.target     = strtrim(text(temp(1):temp(2)));   
-                            thisAttack.init_cond  = strtrim(text(temp(2):temp(3)));
-                            thisAttack.end_cond   = strtrim(text(temp(3):temp(4)));                    
-                            % get arguments (comma separated)
+                            
+                            % type
+                            thisAttack.type = self.cleanField(strtrim(text(1:temp(1))));   
+                            
+                            % target
+                            thisAttack.target = self.cleanField(text(temp(1):temp(2)));   
+                            
+                            % conditions                            
+                            thisAttack.init_cond = self.cleanField(strtrim(text(temp(2):temp(3))));
+                            thisAttack.end_cond = self.cleanField(strtrim(text(temp(3):temp(4))));                    
+                            
+                            % get arguments (space separated)
                             thisAttack.arguments  = {};
-                            args = regexp(strtrim(text(temp(4):end)),',','split');                        
-                            for k = 1 : numel(args)
-                                thisAttack.arguments(k) = strtrim(args(k));
+                            args = self.cleanField(text(temp(4):end));
+                            if ~iscell(args)
+                                % single argument
+                                thisAttack.arguments = {args};
+                            else
+                                for k = 1 : numel(args)
+                                    thisAttack.arguments(k) = strtrim(args(k));
+                                end
                             end
                             
                             % copncatenate
@@ -302,14 +325,14 @@ classdef EpanetCPA
                     for j = 1 : size(section_text,1)
 
                         % get \t separator positions
-                        temp = regexp(section_text{j},'\t');
+                        temp = regexp(section_text{j},',');
                         if isempty(temp)
                              error('Problem with format of cyberoption string #%d in %s', j, self.cpaFile);
                         end
 
                         nsep = numel(temp);
                         text = section_text{j};
-                        option = strtrim(text(1:temp(1)));
+                        option = self.cleanField(text(1:temp(1)));
 
                         switch option
                             case 'verbosity'
@@ -326,12 +349,15 @@ classdef EpanetCPA
 %                                     cyberoptions.what_to_store(2) = text(temp(2)+1:end);
 %                                     
 %                                 elseif nsep == 3
-                                    temp = regexp(strtrim(text(temp(1):end)),'\t','split');                        
+                                    temp = regexp(text(temp(1):end),',','split');
+                                    temp(1) = [];
                                     for k = 1 : numel(temp)
-                                        temp_ = regexp(temp(k),',','split');                        
-                                        for kk = 1 : numel(temp_)
-                                            cyberoptions.what_to_store(k,kk) = strtrim(temp_(kk));
-                                        end
+                                        temp_ = self.cleanField(temp{k});                                                                
+                                        if ~iscell(temp_)
+                                            % handle single case
+                                            temp_ = {temp_};
+                                        end                                    
+                                        cyberoptions.what_to_store{k} = temp_;
                                     end
 %                                 else
 %                                     error('Error in what_to_store option format. Check README.md')
@@ -343,7 +369,13 @@ classdef EpanetCPA
                                 if nsep > 1
                                     error('Problem with format of %s cyberoption.',option);
                                 else
-                                    temp = regexp(strtrim(text(temp(1):end)),',','split');
+                                    temp = self.cleanField(text(temp(1):end));
+                                    
+                                    if ~iscell(temp)
+                                        % handle single tank case
+                                        temp = {temp};
+                                    end
+                
                                     for k = 1 : numel(temp)
                                         cyberoptions.initial_conditions(k) = str2num(temp{k});
                                     end
@@ -358,17 +390,18 @@ classdef EpanetCPA
                                 if nsep > 1
                                     error('Problem with format of %s cyberoption.',option);                                    
                                 else
-                                    filename = strtrim(text(temp(1):end));
+                                    filename = self.cleanField(text(temp(1):end));
                                     cyberoptions.patterns = csvread(filename);                                    
                                 end    
                             case 'pda_options'
-                                if nsep ~= 4
+                                if nsep ~= 1
                                     error('Problem with format of %s cyberoption.',option);                                    
                                 else
-                                    pda_options.emitterExponent = str2num(text(temp(1):temp(2)));
-                                    pda_options.Pmin = str2num(text(temp(2):temp(3)));
-                                    pda_options.Pdes = str2num(text(temp(3):temp(4)));
-                                    pda_options.HFR = strtrim(text(temp(4):end));
+                                    temp_ = self.cleanField(text(temp(1):end));
+                                    pda_options.emitterExponent = str2num(temp_{1});
+                                    pda_options.Pmin = str2num(temp_{2});
+                                    pda_options.Pdes = str2num(temp_{3});
+                                    pda_options.HFR = temp_{4};
                                     cyberoptions.pda_options = pda_options;                                    
                                 end 
                             otherwise
@@ -452,6 +485,17 @@ classdef EpanetCPA
         header = cell2mat(header(1:end-1));
     end
         
+    function clean_text = cleanField(self, text)
+        % this cleans the fields of the .CPA file
+        text(regexp(text,','))=[];  % remove commas        
+        if ~isempty(regexp(strtrim(text),' ','match'))
+            % split if needed
+            clean_text = strsplit(strtrim(text),' '); 
+        else
+            clean_text = strtrim(text);   
+        end
+    end    
+    
     % end of private methods
     end            
 end
