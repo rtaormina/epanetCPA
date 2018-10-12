@@ -127,7 +127,12 @@ classdef EpanetCPASimulation
             self.whatToStore.linkID{j} = EpanetHelper.getComponentId(thisIdx,0);
         end   
         % this is needed for stuff like everything, all links, all ....
-        self.whatToStore.sensors = cat(2,self.whatToStore.nodeID,self.whatToStore.linkID);
+        % TO DO: improve the concatenation bit
+        try
+            self.whatToStore.sensors = cat(2,self.whatToStore.nodeID,self.whatToStore.linkID);
+        catch
+            self.whatToStore.sensors = cat(1,self.whatToStore.nodeID,self.whatToStore.linkID);
+        end
         
         
         % initialize time

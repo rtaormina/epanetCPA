@@ -1,25 +1,45 @@
 [CYBERNODES]
-; Name Sensors Actuators
- PLC1		PU1, PU2, PU3
- PLC2	T1
- PLC3	T2	PU4, PU5, PU6, PU7, V2
- PLC4	T3
- PLC5		PU8, PU9, PU10, PU11
- PLC6	T4
- PLC7	T5
- PLC8	T6
- PLC9	T7
+; Name, Sensors, Actuators
+ PLC1, F_PU1 F_PU2 F_PU3 P_J280 P_J269, PU1 PU2 PU3
+ PLC2, P_T1, 
+ PLC3, P_T2 F_PU4 F_PU5 F_PU6 F_PU7 F_V2 P_J300 P_J256 P_J289 P_J415 P_J14 P_J422, PU4 PU5 PU6 PU7 V2
+ PLC4, P_T3,
+ PLC5, F_PU8 F_PU9 F_PU10 F_PU11 P_J302 P_J306 P_J307 P_J317, PU8 PU9 PU10 PU11
+ PLC6, P_T4,
+ PLC7, P_T5,
+ PLC8, P_T6,
+ PLC9, P_T7,
 ; SCADA
+
+
+[CYBERLINKS]
+; Source,Destination,Variables
+PLC1, SCADA, F_PU1 F_PU2 F_PU3 P_J280 P_J269
+PLC2, SCADA, P_T1
+PLC2, PLC1, P_T1
+PLC3, SCADA, P_T2 F_PU4 F_PU5 F_PU6 F_PU7 F_V2 P_J300 P_J256 P_J289 P_J415 P_J14 P_J422
+PLC4, SCADA, P_T3
+PLC4, PLC3, P_T3
+PLC5, SCADA, F_PU8 F_PU9 F_PU10 F_PU11 P_J302 P_J306 P_J307 P_J317
+PLC6, SCADA, P_T4
+PLC6, PLC3, P_T4
+PLC7, SCADA, P_T5
+PLC7, PLC5, P_T5
+PLC8, SCADA, P_T6
+PLC9, SCADA, P_T7
+PLC9, PLC5, P_T7
+
 
 [CYBERATTACKS]
 ; Type	Target	Init_cond	End_cond	Arguments
 ; Denial-of-service of the connection link between PLC2 and PLC1. PLC1 fails to receive updated readings water level data for tank T1 and keeps the pumps (PU1,PU2) ON. This causes a surge in the tank T1.
-Communication	PLC2-T1-PLC1	(TIME>50)&&(PU2>0)	TIME==-1	DoS
-Communication	PLC2-T1-SCADA	TIME==58	TIME==-1	replay,50,0.05,7,0
+; Attack to communication link from PLC2 to SCADA used to conceal the attack.
+Communication,	PLC2-P_T1-PLC1,	(TIME>50)&&(PU2>0),	TIME==-1,	DoS
+Communication,	PLC2-P_T1-SCADA,	TIME==58,	TIME==-1,	replay 50 0.05 7 0
 
 
 [CYBEROPTIONS]
-verbosity	1
-what_to_store	T1, T2, T3, T4, T5, T6, T7, PU1, PU2, PU3, J269, J280	PRESSURE	FLOW
-initial_conditions	4,3.75,3.25,3.75,3.5,3.5,3
-patterns_file	./patterns.csv
+verbosity, 1
+what_to_store,	T1 T2 T3 T4 T5 T6 T7 PU1 PU2 PU3 J269 J280, PRESSURE, FLOW
+initial_conditions, 4 3.75 3.25 3.75 3.5 3.5 3
+patterns_file, ./ctown_patterns.csv

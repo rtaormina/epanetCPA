@@ -1,24 +1,43 @@
 [CYBERNODES]
-; Name Sensors Actuators
- PLC1		PU1, PU2, PU3
- PLC2	T1
- PLC3	T2	PU4, PU5, PU6, PU7, V2
- PLC4	T3
- PLC5		PU8, PU9, PU10, PU11
- PLC6	T4
- PLC7	T5
- PLC8	T6
- PLC9	T7
+; Name, Sensors, Actuators
+ PLC1, F_PU1 F_PU2 F_PU3 P_J280 P_J269, PU1 PU2 PU3
+ PLC2, P_T1, 
+ PLC3, P_T2 F_PU4 F_PU5 F_PU6 F_PU7 F_V2 P_J300 P_J256 P_J289 P_J415 P_J14 P_J422, PU4 PU5 PU6 PU7 V2
+ PLC4, P_T3,
+ PLC5, F_PU8 F_PU9 F_PU10 F_PU11 P_J302 P_J306 P_J307 P_J317, PU8 PU9 PU10 PU11
+ PLC6, P_T4,
+ PLC7, P_T5,
+ PLC8, P_T6,
+ PLC9, P_T7,
 ; SCADA
 
+
+[CYBERLINKS]
+; Source,Destination,Variables
+PLC1, SCADA, F_PU1 F_PU2 F_PU3 P_J280 P_J269
+PLC2, SCADA, P_T1
+PLC2, PLC1, P_T1
+PLC3, SCADA, P_T2 F_PU4 F_PU5 F_PU6 F_PU7 F_V2 P_J300 P_J256 P_J289 P_J415 P_J14 P_J422
+PLC4, SCADA, P_T3
+PLC4, PLC3, P_T3
+PLC5, SCADA, F_PU8 F_PU9 F_PU10 F_PU11 P_J302 P_J306 P_J307 P_J317
+PLC6, SCADA, P_T4
+PLC6, PLC3, P_T4
+PLC7, SCADA, P_T5
+PLC7, PLC5, P_T5
+PLC8, SCADA, P_T6
+PLC9, SCADA, P_T7
+PLC9, PLC5, P_T7
+
+
 [CYBERATTACKS]
-; Type	Target	Init_cond	End_cond	Arguments
+; Type,Target,Init_cond,End_cond,Arguments
 ; Attack on communication link between T2 water level sensor and PLC3. A constant (HIGH) value of 5.6 meters ; is injected, leading PLC3 to close valve V2. Tank T2 empties and network is disconnected.
-Communication	PHY-T2-PLC3	TIME==10	TIME==20	constant, 5.6
+Communication, PHY-P_T2-PLC3, TIME==10, TIME==20, constant 5.6
 
 [CYBEROPTIONS]
-verbosity	1
-what_to_store	T1, T2, T3, T4, T5, T6, T7, PU1, PU2, PU3, J269, J280	PRESSURE	FLOW
-initial_conditions	4,3.75,3.25,3.75,3.5,3.5,3
-patterns_file	./patterns.csv
-pda_options	0.5	0	20	Wagner
+verbosity, 1
+what_to_store,	T1 T2 T3 T4 T5 T6 T7 PU1 PU2 PU3 J269 J280, PRESSURE, FLOW
+initial_conditions, 4 3.75 3.25 3.75 3.5 3.5 3
+patterns_file, ./ctown_patterns.csv
+pda_options, 0.5 0 20 Wagner
