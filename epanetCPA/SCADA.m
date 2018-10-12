@@ -15,8 +15,8 @@ classdef SCADA < Controller
         % invoke superclass constructors
         self@Controller(SCADAinfo, controls);
         
-        % add all remaining sensors (i.e., SCADA always sees all)
-        self.sensorsIn = setdiff(allSensors,self.sensors);        
+%         % add all remaining sensors (i.e., SCADA always sees all)
+%         self.sensorsIn = setdiff(allSensors,self.sensors);        
     end
    
     % end of public methods

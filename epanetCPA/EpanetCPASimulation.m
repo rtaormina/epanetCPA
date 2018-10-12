@@ -74,6 +74,7 @@ classdef EpanetCPASimulation
             'epanet2','ENgetcount', EpanetHelper.EPANETCODES('EN_LINKCOUNT'),nLinks);
 
         % get all node and link indexes to store
+        % TO DO: create a dedicated function for this
         self.whatToStore.nodeIdx = [];
         self.whatToStore.linkIdx = [];
         switch self.whatToStore.sensors{1}
@@ -86,16 +87,21 @@ classdef EpanetCPASimulation
                 self.whatToStore.nodeVars = {'PRESSURE','HEAD','DEMAND'};
                 self.whatToStore.linkVars = {'FLOW', 'STATUS', 'SETTING','ENERGY'}; 
             case 'all'
-                % we will store readings for all nodes
+                % we will store selected readings for all nodes
                 self.whatToStore.nodeIdx = 1 : nNodes;
                 % ... and all links
                 self.whatToStore.linkIdx = 1 : nLinks; 
             case 'all nodes'
-                % we will store readings for all nodes
+                % we will store selected readings for all nodes
                 self.whatToStore.nodeIdx = 1 : nNodes;
             case 'all links'
-                % we will store readings for all links
+                % we will store selected readings for all links
                 self.whatToStore.linkIdx = 1 : nLinks; 
+%             case 'SCADA'
+%                 % store ground truth of all variables seen by SCADA
+%                 retrieve 
+%                 self.epanetMap.cyberlayer.systems(3)
+%             
             otherwise
                 for i = 1 : numel(self.whatToStore.sensors)
                     thisId = self.whatToStore.sensors{i};
@@ -119,7 +125,10 @@ classdef EpanetCPASimulation
         for j = 1 : numel(self.whatToStore.linkIdx)
             thisIdx = self.whatToStore.linkIdx(j);
             self.whatToStore.linkID{j} = EpanetHelper.getComponentId(thisIdx,0);
-        end                        
+        end   
+        % this is needed for stuff like everything, all links, all ....
+        self.whatToStore.sensors = cat(2,self.whatToStore.nodeID,self.whatToStore.linkID);
+        
         
         % initialize time
         self.simTime = 0;      

@@ -26,7 +26,13 @@ classdef Controller < matlab.mixin.Heterogeneous
     end
    
     % end of public methods
+    
+    function self = addSensorIn(self, sensor)
+        self.sensorsIn = cat(2, self.sensorsIn, sensor);
     end
+    
+    end
+    
     
     
     % private methods
@@ -39,14 +45,16 @@ classdef Controller < matlab.mixin.Heterogeneous
             thisActuator = EpanetHelper.getComponentId(controls(i).lIndex, 0);
             if ismember(thisActuator, self.actuators)
                 % retrieve control ID
-                self.controlsID = cat(1, self.controlsID, i);            
-                % see if node is read by controller or reading is from another controller
-                thisSensor = EpanetHelper.getComponentId(controls(i).nIndex, 1);
-                if ~ismember(thisSensor, self.sensors)
-                    % is coming from another controller, add to sensorsIn
-                    % (add P_ since we have water levels and pressures)
-                    self.sensorsIn = cat(2, self.sensorsIn, ['P_',thisSensor]);            
-                end                
+                self.controlsID = cat(1, self.controlsID, i);   
+                
+                % OVERRIDE DUE TO CYBER LINKS                
+%                 % see if node is read by controller or reading is from another controller
+%                 thisSensor = EpanetHelper.getComponentId(controls(i).nIndex, 1);
+%                 if ~ismember(thisSensor, self.sensors)
+%                     % is coming from another controller, add to sensorsIn
+%                     % (add P_ since we have water levels and pressures)
+%                     self.sensorsIn = cat(2, self.sensorsIn, ['P_',thisSensor]);            
+%                 end                
             end
         end
         

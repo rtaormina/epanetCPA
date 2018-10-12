@@ -205,12 +205,14 @@ classdef EpanetCPA
                                 thisNode.sensors = temp_;
                                 
                                 % ... actuators...
-                                temp_ = self.cleanField(section_text{j}(temp(2):end));
-                                if ~iscell(temp_)
-                                    temp_ = {temp_};
+                                temp_ = self.cleanField(section_text{j}(temp(2):end));  
+                                if ~isempty(temp_)
+                                    if ~iscell(temp_)
+                                        temp_ = {temp_};
+                                    end
+                                    thisNode.actuators = temp_;
                                 end
-                                thisNode.actuators = temp_;
-                                
+
                                 % concatenate
                                 cybernodes = cat(1,cybernodes,thisNode);
                             end
@@ -333,83 +335,87 @@ classdef EpanetCPA
                         nsep = numel(temp);
                         text = section_text{j};
                         option = self.cleanField(text(1:temp(1)));
+                        
+                        % check if comment first...                          
+                        temp_ = strtrim(text);
+                        if temp_(1)~=';'
+                            switch option
+                                case 'verbosity'
+                                    % after how many steps do you want echo on
+                                    % screen?
+                                    cyberoptions.verbosity = str2num(text(temp(1):end));
+                                case 'what_to_store'                                
+                                    % which nodes/links and variables to store?
+            %                                 if nsep == 1
+            %                                     cyberoptions.what_to_store(1) = text(temp(1):end);
+            %                                 elseif nsep == 2
+            %                                     % all links or all nodes
+            %                                     cyberoptions.what_to_store(1) = text(temp(1):temp(2));
+            %                                     cyberoptions.what_to_store(2) = text(temp(2)+1:end);
+            %                                     
+            %                                 elseif nsep == 3
+                                        temp = regexp(text(temp(1):end),',','split');
+                                        temp(1) = [];
+                                        for k = 1 : numel(temp)
+                                            temp_ = self.cleanField(temp{k});                                                                
+                                            if ~iscell(temp_)
+                                                % handle single case
+                                                temp_ = {temp_};
+                                            end                                    
+                                            cyberoptions.what_to_store{k} = temp_;
+                                        end
+            %                                 else
+            %                                     error('Error in what_to_store option format. Check README.md')
+            %                                 end
+                                case 'initial_conditions'
+                                    % initial tank conditions
+                                    % set of n comma separated values, where n
+                                    % in the number of tanks in the network
+                                    if nsep > 1
+                                        error('Problem with format of %s cyberoption.',option);
+                                    else
+                                        temp = self.cleanField(text(temp(1):end));
 
-                        switch option
-                            case 'verbosity'
-                                % after how many steps do you want echo on
-                                % screen?
-                                cyberoptions.verbosity = str2num(text(temp(1):end));
-                            case 'what_to_store'                                
-                                % which nodes/links and variables to store?
-%                                 if nsep == 1
-%                                     cyberoptions.what_to_store(1) = text(temp(1):end);
-%                                 elseif nsep == 2
-%                                     % all links or all nodes
-%                                     cyberoptions.what_to_store(1) = text(temp(1):temp(2));
-%                                     cyberoptions.what_to_store(2) = text(temp(2)+1:end);
-%                                     
-%                                 elseif nsep == 3
-                                    temp = regexp(text(temp(1):end),',','split');
-                                    temp(1) = [];
-                                    for k = 1 : numel(temp)
-                                        temp_ = self.cleanField(temp{k});                                                                
-                                        if ~iscell(temp_)
-                                            % handle single case
-                                            temp_ = {temp_};
-                                        end                                    
-                                        cyberoptions.what_to_store{k} = temp_;
+                                        if ~iscell(temp)
+                                            % handle single tank case
+                                            temp = {temp};
+                                        end
+
+                                        for k = 1 : numel(temp)
+                                            cyberoptions.initial_conditions(k) = str2num(temp{k});
+                                        end
                                     end
-%                                 else
-%                                     error('Error in what_to_store option format. Check README.md')
-%                                 end
-                            case 'initial_conditions'
-                                % initial tank conditions
-                                % set of n comma separated values, where n
-                                % in the number of tanks in the network
-                                if nsep > 1
-                                    error('Problem with format of %s cyberoption.',option);
-                                else
-                                    temp = self.cleanField(text(temp(1):end));
-                                    
-                                    if ~iscell(temp)
-                                        % handle single tank case
-                                        temp = {temp};
+                                case 'patterns_file'
+                                    % Absolute path of csv file containing data
+                                    % patterns. The file has number of rows
+                                    % equal to the total steps of the
+                                    % simulation and number of columns equal to
+                                    % the number of patterns specified in the
+                                    % .inp file.
+                                    if nsep > 1
+                                        error('Problem with format of %s cyberoption.',option);                                    
+                                    else
+                                        filename = self.cleanField(text(temp(1):end));
+                                        cyberoptions.patterns = csvread(filename);                                    
+                                    end    
+                                case 'pda_options'
+                                    if nsep ~= 1
+                                        error('Problem with format of %s cyberoption.',option);                                    
+                                    else
+                                        temp_ = self.cleanField(text(temp(1):end));
+                                        pda_options.emitterExponent = str2num(temp_{1});
+                                        pda_options.Pmin = str2num(temp_{2});
+                                        pda_options.Pdes = str2num(temp_{3});
+                                        pda_options.HFR = temp_{4};
+                                        cyberoptions.pda_options = pda_options;                                    
+                                    end 
+                                otherwise
+                                    if option(1)~= ';'                                    
+                                        error('Option %s not recognized!',option)                    
                                     end
-                
-                                    for k = 1 : numel(temp)
-                                        cyberoptions.initial_conditions(k) = str2num(temp{k});
-                                    end
-                                end
-                            case 'patterns_file'
-                                % Absolute path of csv file containing data
-                                % patterns. The file has number of rows
-                                % equal to the total steps of the
-                                % simulation and number of columns equal to
-                                % the number of patterns specified in the
-                                % .inp file.
-                                if nsep > 1
-                                    error('Problem with format of %s cyberoption.',option);                                    
-                                else
-                                    filename = self.cleanField(text(temp(1):end));
-                                    cyberoptions.patterns = csvread(filename);                                    
-                                end    
-                            case 'pda_options'
-                                if nsep ~= 1
-                                    error('Problem with format of %s cyberoption.',option);                                    
-                                else
-                                    temp_ = self.cleanField(text(temp(1):end));
-                                    pda_options.emitterExponent = str2num(temp_{1});
-                                    pda_options.Pmin = str2num(temp_{2});
-                                    pda_options.Pdes = str2num(temp_{3});
-                                    pda_options.HFR = temp_{4};
-                                    cyberoptions.pda_options = pda_options;                                    
-                                end 
-                            otherwise
-                                if option(1)~= ';'                                    
-                                    error('Option %s not recognized!',option)                    
-                                end                                
+                            end
+                        end                        
                         end
-                    end
                 otherwise
                     error('Section %s not recognized!',section_name)
             end

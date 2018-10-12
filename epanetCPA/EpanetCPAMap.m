@@ -217,8 +217,10 @@ classdef EpanetCPAMap
     end  
     
     function self = createCyberLayer(self, cybernodes, cyberlinks)
-        % check for duplicate cybernodes
-        if isequal(unique([cybernodes.name]), sort([cybernodes.name]))
+                
+        % CYBERNODES        
+        % check for duplicates
+        if ~isequal(unique({cybernodes.name}), sort({cybernodes.name}))
             error('Duplicate names in cybernodes. Check your .cpa file.')
         end
 
@@ -236,8 +238,8 @@ classdef EpanetCPAMap
             end
         end
 
-        % verify if  sensors/actuators are directly connected only to one PLC (or SCDA)
-        % and all the sensors/actutators in the controls are connected to cybernodes 
+        % verify if  sensors/actuators are directly connected only to one PLC (or SCADA)
+        % and all the sensors/actuators in the controls are connected to cybernodes 
 
         % this checks for uniqueness...
         if isequal(unique([cybernodes.sensors]), sort([cybernodes.sensors])) && ...                
@@ -256,6 +258,39 @@ classdef EpanetCPAMap
             % ... and check if are all connected to cybernodes
             if isempty(setdiff(unique(sensors), sort([cybernodes.sensors]))) && ...                
                     isempty(setdiff(unique(actuators), sort([cybernodes.actuators])));
+                % check if some specified sensors/actuators do not exists
+                % sensors
+                sensor_list = sort([cybernodes.sensors]);
+                for i=1 : numel(sensor_list)
+                    thisSensor = sensor_list{i};
+                    temp = regexp(thisSensor,'_','split');
+                    if temp{1} == 'P'
+                        % it's a junction or a tank
+                        if ~ismember(temp{2},cat(1,self.components('JUNCTIONS'),...
+                                self.components('TANKS')))
+                            error('Problem with %s. Component %s does not exist',thisSensor,temp{2});
+                        end                        
+                    elseif temp{1} == 'F'
+                        % it's a pump, valve or pipe
+                        if ~ismember(temp{2},cat(1,self.components('PUMPS'),...
+                                self.components('VALVES'),self.components('PIPES')))
+                            error('Problem with %s. Component %s does not exist',thisSensor,temp{2});
+                        end                        
+                    else
+                        error('Variable %s not recognized',temp{1});
+                    end                    
+                end
+                
+                % actutators
+                actuator_list = sort([cybernodes.actuators]);                
+                if min(ismember(actuator_list,...
+                        cat(1,self.components('PUMPS'),...
+                        self.components('VALVES'),...
+                        self.components('PIPES')))) == 0
+                    error('Some actuators do not exist. Check your .cpa file.');
+                end
+                
+                
                 fprintf('PLC and controls are consistent. Check PASSED!\n');
             else
                 error('Some sensors/actuators in the controls are not linked to cybernodes. Check FAILED!');                
@@ -275,7 +310,7 @@ classdef EpanetCPAMap
             self.cyberlayer.systems = cat(1,self.cyberlayer.systems,PLC(cybernodes(i),self.controls));    
         end  
 
-        % SCADA
+        % SCADA (THIS NEEDS TO BE CHECKED!)
         if scadaIndex== -1
             % SCADA sees only
             self.cyberlayer.systems = cat(1,self.cyberlayer.systems,SCADA([],self.controls,self.cyberlayer.sensors));    
@@ -285,7 +320,7 @@ classdef EpanetCPAMap
                 SCADA(cybernodes(scadaIndex),self.controls,self.cyberlayer.sensors));    
         end
         
-        % create cyberlinks
+        % CYBERLINKS
         temp = [];
         for i = 1 : numel(cyberlinks)
             thisLink = cyberlinks(i);          
@@ -296,8 +331,29 @@ classdef EpanetCPAMap
                 temp = [temp, Cyberlink(cyberlinkInfo)];
             end
         end        
+        % check for duplicates
+        if ~isequal(unique({temp.name}), sort({temp.name}))
+            error('Duplicate names in cyberlinks. Check your .cpa file.')
+        end
+        
         self.cyberlayer.cyberlinks = temp;
-
+        
+        % check cybernodes vs cyberlinks
+        for i = 1:numel(self.cyberlayer.cyberlinks)
+            % check if senders are correct
+            thisLink = self.cyberlayer.cyberlinks(i);
+            ixSender = find(strcmp(thisLink.sender,{self.cyberlayer.systems.name}));
+            if ~ismember(thisLink.signal,self.cyberlayer.systems(ixSender).sensors)
+                error('%s does not read %s, so it cannot send it to %s. Check your .cpa file.',...
+                    thisLink.sender,thisLink.signal,thisLink.receiver);
+            end
+            
+            % write sensorsIn (do this better later)
+            ixReceiver = find(strcmp(thisLink.receiver,{self.cyberlayer.systems.name}));
+            self.cyberlayer.systems(ixReceiver) =...
+                self.cyberlayer.systems(ixReceiver).addSensorIn(thisLink.signal);
+        end
+        
     end
     
     function self = getAllComponents(self)

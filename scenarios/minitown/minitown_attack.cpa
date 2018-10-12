@@ -6,9 +6,9 @@
 
 [CYBERLINKS]
 ; Source, Destination, Variables
- PLC1, SCADA, F_PU1 F_PU2 P_J269 P_J280
- PLC2, SCADA, P_T1
- ;PLC2, PLC1, P_T1
+PLC1, SCADA, F_PU1 F_PU2 P_J269 P_J280
+PLC2, SCADA, P_T1
+PLC2, PLC1, P_T1
 
 [CYBERATTACKS]
 ; Type,	Target,	Init_cond,	End_cond,	Arguments
@@ -19,6 +19,7 @@ Communication,	PLC2-P_T1-SCADA,	TIME==70,	TIME==-1, replay 50 0.05 5 0
 
 [CYBEROPTIONS]
 verbosity, 1
-what_to_store,	T1 PU1 PU2 J269 J280, PRESSURE, FLOW
+; what_to_store,	everything
+what_to_store,	everything
 initial_conditions, 4
 patterns_file, ./minitown_patterns.csv
