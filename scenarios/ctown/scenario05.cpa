@@ -13,7 +13,7 @@
 
 
 [CYBERLINKS]
-; Source,Destination,Variables
+; Source,Destination,Sensors
 PLC1, SCADA, F_PU1 F_PU2 F_PU3 P_J280 P_J269
 PLC2, SCADA, P_T1
 PLC2, PLC1, P_T1

@@ -1,20 +1,18 @@
 [CYBERNODES]
-; Name, Sensors, Actuators
- PLC1, F_PU1 F_PU2 P_J269 P_J280, PU1 PU2
- PLC2, P_T1,
-; SCADA
+;Name, Sensors, 			Actuators
+ PLC1, 	P_TANK,
+ PLC2, 	F_PUMP1 F_PUMP2, 	PUMP1 PUMP2
 
 [CYBERLINKS]
-; Source, Destination, Variables
- PLC1, SCADA, F_PU1 F_PU2 P_J269 P_J280
- PLC2, SCADA, P_T1
- PLC2, PLC1, P_T1
+;Source, 	Destination, 	Sensors
+ PLC1, 		SCADA, 			P_TANK
+ PLC1, 		PLC2, 			P_TANK
+ PLC2, 		SCADA, 			F_PUMP1 F_PUMP2
 
 [CYBERATTACKS]
 ; Type,	Target,	Init_cond,	End_cond,	Arguments
 
 [CYBEROPTIONS]
 verbosity, 1
-what_to_store,	T1 PU1 PU2 J269 J280, PRESSURE, FLOW
 initial_conditions, 4
 patterns_file, ./minitown_patterns.csv
