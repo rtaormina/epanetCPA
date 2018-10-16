@@ -1,19 +1,25 @@
 [CYBERNODES]
-;Name, Sensors, 			Actuators
+;Name, Sensors, 					Actuators
  PLC1, 	P_TANK,
- PLC2, 	F_PUMP1 F_PUMP2, 	PUMP1 PUMP2
+ PLC2, 	F_PUMP1 F_PUMP2 S_PUMP1 S_PUMP2,	PUMP1 PUMP2
 
 [CYBERLINKS]
 ;Source, 	Destination, 	Sensors
  PLC1, 		SCADA, 			P_TANK
  PLC1, 		PLC2, 			P_TANK
- PLC2, 		SCADA, 			F_PUMP1 F_PUMP2
+ PLC2, 		SCADA, 			F_PUMP1 F_PUMP2 S_PUMP1 S_PUMP2
 
 [CYBERATTACKS]
 ; Type,	Target,	Init_cond,	End_cond,	Arguments
-; Denial-of-service of the connection link between PLC2 and PLC1. PLC1 fails to receive updated readings water level data for tank T1 and keeps the pumps (PU1,PU2) ON. This causes a surge in the tank T1.
+; Denial-of-service of the connection link between PLC2 and PLC1. 
+; PLC1 fails to receive updated readings water level data for tank T1 and keeps the pumps (PU1,PU2) ON. 
+; This causes a surge in the tank T1.
 Communication,	PLC1-P_TANK-PLC2,	TIME==90,	TIME==140,	DoS
-Communication,	PLC1-P_TANK-SCADA,	TIME==70,	TIME==-1, replay 50 0.05 5 0
+Communication,	PLC1-P_TANK-SCADA,	TIME==70,	TIME==-1, 	replay 50 0.05 5 0
+Communication,	PLC2-S_PUMP1-SCADA,	TIME==10,	TIME==-1, 	constant 5
+Communication,	PLC2-S_PUMP2-SCADA,	TIME==30,	TIME==-1, 	DoS
+
+
 
 [CYBEROPTIONS]
 verbosity, 1

@@ -311,13 +311,14 @@ classdef EpanetCPASimulation
                 layer  = attack.layer;
                 % (first remove prefix from target)
                 temp = regexp(attack.target,'_','split');
+                variable = temp{1};
                 target = temp{2}; 
         
                 alteredReading = attack.alteredReading;
                 
                 % create new entry for altered readings
                 self = self.storeAlteredReadingEntry(...
-                    layer, target, alteredReading);                
+                    layer, variable, target, alteredReading);                
  
                 if strcmp(layer,'PHY')
                     % direct attack to sensor
@@ -619,22 +620,31 @@ classdef EpanetCPASimulation
         end
     end
     
-    function self = storeAlteredReadingEntry(self, layer, target, alteredReading)  
+    function self = storeAlteredReadingEntry(self, layer, variable, target, alteredReading)  
 
         % creates and store new entry for altered readings
         thisEntry.time     = self.T(end);
         thisEntry.layer    = layer;
         thisEntry.sensorId = target;
         thisEntry.reading  = alteredReading;    
-        
-        % check if target is node or link to see if reading is pressure or flow              
-       
-        [~, ~, isNode] = EpanetHelper.getComponentIndex(target);
-        if isNode
-            thisEntry.variable = 'PRESSURE';
-        else
-            thisEntry.variable = 'FLOW';
+        switch variable
+            case 'P'
+                thisEntry.variable = 'PRESSURE';
+            case 'F'
+                thisEntry.variable = 'FLOW';
+            case 'S'
+                thisEntry.variable = 'STATUS';
+            otherwise     
+                error('Why did I get here?')
         end
+        % check if target is node or link to see if reading is pressure or flow              
+%        
+%         [~, ~, isNode] = EpanetHelper.getComponentIndex(target);
+%         if isNode
+%             thisEntry.variable = 'PRESSURE';
+%         else
+%             thisEntry.variable = 'FLOW';
+%         end        
         self.alteredReadings = cat(1,self.alteredReadings,thisEntry);
     end
     

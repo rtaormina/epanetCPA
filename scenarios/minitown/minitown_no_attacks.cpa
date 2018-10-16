@@ -1,7 +1,7 @@
 [CYBERNODES]
-;Name, Sensors, 			Actuators
+;Name, Sensors, 					Actuators
  PLC1, 	P_TANK,
- PLC2, 	F_PUMP1 F_PUMP2, 	PUMP1 PUMP2
+ PLC2, 	F_PUMP1 F_PUMP2 S_PUMP1,   	PUMP1 PUMP2
 
 [CYBERLINKS]
 ;Source, 	Destination, 	Sensors

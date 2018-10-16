@@ -347,10 +347,12 @@ classdef AttackOnCommunication < CyberPhysicalAttack
         thisComponent = self.target;      
         % remove prefix
         temp = regexp(thisComponent,'_','split');
-        if ~ismember(temp{1},'PF')
+        thisVariable = temp{1};
+        thisComponent = temp{2};
+        if ~ismember(thisVariable,'PFS')
             error('Attacks targeting %s not implemented yet.',temp{1});
         end
-        thisComponent = temp{2};
+        
         
         
         [thisIndex,~,isNode] = EpanetHelper.getComponentIndex(thisComponent);
@@ -361,7 +363,7 @@ classdef AttackOnCommunication < CyberPhysicalAttack
             thisIndex = find(ismember(epanetSim.whatToStore.linkIdx,thisIndex));
         end
 
-        % check if variable has been stored, otherwise return error
+        % check if variable has been stored, otherwise return error        
         if isNode
             if isempty(epanetSim.readings.PRESSURE) || (sum(ismember(epanetSim.whatToStore.sensors, thisComponent))==0)
                 error(['Cannot perform attack as PRESSURE(TANK LEVEL) variable for %s is not being stored during the simulation.\n',...
@@ -395,7 +397,14 @@ classdef AttackOnCommunication < CyberPhysicalAttack
                 thisReading = epanetSim.readings.PRESSURE(rowToCopyFrom,thisIndex);
             else
                 % return flow if it's a link
-                thisReading = epanetSim.readings.FLOW(rowToCopyFrom,thisIndex);
+                switch thisVariable
+                    case 'F'
+                        thisReading = epanetSim.readings.FLOW(rowToCopyFrom,thisIndex);
+                    case 'S'
+                        thisReading = epanetSim.readings.STATUS(rowToCopyFrom,thisIndex);
+                    otherwise
+                        error('How did I get here?')
+                end
             end
         end        
     end
