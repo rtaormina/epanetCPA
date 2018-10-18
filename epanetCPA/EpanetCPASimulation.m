@@ -542,7 +542,13 @@ classdef EpanetCPASimulation
             % initial condition
             thisCondition = self.attacks{i}.ini_condition;
             % retrieve vars
-            vars = symvar(thisCondition);
+            try
+                vars = symvar(thisCondition);
+            catch
+                error(['Problem with the format of initial or ending', ...
+                    'conditions of the attacks.',...\
+                    'Try removing all whitespaces: example TIME == 20 --> TIME==20']);
+            end
             for j = 1 : numel(vars)
                 thisVar = vars{j};
                 % check if symbol has already been included (search dict
@@ -633,6 +639,8 @@ classdef EpanetCPASimulation
             case 'F'
                 thisEntry.variable = 'FLOW';
             case 'S'
+                thisEntry.variable = 'STATUS';
+            case 'SE'
                 thisEntry.variable = 'STATUS';
             otherwise     
                 error('Why did I get here?')

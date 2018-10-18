@@ -402,6 +402,8 @@ classdef AttackOnCommunication < CyberPhysicalAttack
                         thisReading = epanetSim.readings.FLOW(rowToCopyFrom,thisIndex);
                     case 'S'
                         thisReading = epanetSim.readings.STATUS(rowToCopyFrom,thisIndex);
+                    case 'SE'
+                        thisReading = epanetSim.readings.SETTING(rowToCopyFrom,thisIndex);
                     otherwise
                         error('How did I get here?')
                 end

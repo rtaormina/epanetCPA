@@ -270,7 +270,7 @@ classdef EpanetCPAMap
                                 self.components('TANKS')))
                             error('Problem with %s. Component %s does not exist',thisSensor,temp{2});
                         end                        
-                    elseif (temp{1} == 'F') || (temp{1} == 'S')
+                    elseif ismember(temp{1},['F','S','SE'])
                         % it's a pump, valve or pipe
                         if ~ismember(temp{2},cat(1,self.components('PUMPS'),...
                                 self.components('VALVES'),self.components('PIPES')))
