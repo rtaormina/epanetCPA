@@ -8,10 +8,10 @@ classdef AttackOnCommunication < CyberPhysicalAttack
         alteredReading          % current altered reading of the sensor        
 		
         sender                  % starting point of the communication, can be 
-                                % PHY, a PLC or SCADA
+                                % NULL, a PLC or SCADA
 								
         receiver                % ending point of tshe communication, can be 
-                                % PHY, a PLC or SCADA   
+                                % NULL, a PLC or SCADA   
         
         targetIsSensor          % TRUE if target is a node (sensor)
                                 % FALSE if it is a link (actuator). 
@@ -168,21 +168,21 @@ classdef AttackOnCommunication < CyberPhysicalAttack
             self.targetIsSensor = sum(ismember(PLCs.sensors,self.target))==1;
         end
                 
-        % check if connection is inplace: sender has to be either PHY or have target in sensors; 
-        % receiver has to be either PHY (for actuators) or have sensor in sensorsIn
+        % check if connection is inplace: sender has to be either NULL or have target in sensors; 
+        % receiver has to be either NULL (for actuators) or have sensor in sensorsIn
         ixSender    = find(ismember({PLCs.systems.name},self.sender));
         ixReceiver  = find(ismember({PLCs.systems.name},self.receiver));
-        if isempty(ixSender) && ~strcmp(self.sender,'PHY')
+        if isempty(ixSender) && ~strcmp(self.sender,'NULL')
             error('AttackOnCommunication: sender %s does not exist.', self.sender);
         end
         
-        if isempty(ixReceiver) && ~strcmp(self.receiver,'PHY')
+        if isempty(ixReceiver) && ~strcmp(self.receiver,'NULL')
             error('AttackOnCommunication: receiver %s does not exist.', self.receiver);
         end
         
         if self.targetIsSensor
             % target is a sensor
-            if strcmp(self.sender,'PHY')
+            if strcmp(self.sender,'NULL')
                 % receiver must have sensor in his sensor list
                 if sum(ismember(PLCs.systems(ixReceiver).sensors,self.target)) == 0
                     error('AttackOnCommunication: receiver %s is not linked to %s sensor.',...
@@ -202,7 +202,7 @@ classdef AttackOnCommunication < CyberPhysicalAttack
             end       
         else   
             % target is an actuator        
-            if strcmp(self.receiver,'PHY')
+            if strcmp(self.receiver,'NULL')
                 % sender must have actuator in his actuator list
                 if sum(ismember(PLCs.systems(ixSender).actuators,self.target)) == 0
                     error('AttackOnCommunication: sender %s is not linked to %s actuator.',...
@@ -234,8 +234,8 @@ classdef AttackOnCommunication < CyberPhysicalAttack
                         self.sender, self.target);
                 end  
             else
-                % receiver must be PHY or SCADA
-                error('AttackOnCommunication: if target is an actuator, receiver can only be PHY or SCADA.')        
+                % receiver must be NULL or SCADA
+                error('AttackOnCommunication: if target is an actuator, receiver can only be NULL or SCADA.')        
             end
         end        
     end

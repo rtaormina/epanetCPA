@@ -310,7 +310,8 @@ classdef EpanetCPASimulation
                 % get layer and target
                 layer  = attack.layer;
                 % (first remove prefix from target)
-                temp = regexp(attack.target,'_','split');
+                sensor = attack.target;
+                temp = regexp(sensor,'_','split');
                 variable = temp{1};
                 target = temp{2}; 
         
@@ -333,7 +334,7 @@ classdef EpanetCPASimulation
                     
                     % alter downstream if sensor directly connected to
                     % controller
-                    if ismember(target, thisController.sensors)
+                    if ismember(sensor, thisController.sensors)
                         doesPropagate = true;
                     end
                 end
@@ -347,12 +348,12 @@ classdef EpanetCPASimulation
                     for j = 1 : size(systems,1)
                         controllerName_ = systems(j).name;
                         if (strcmp(controllerName_,controllerName) == 0) && ...                                 
-                            (sum(ismember(systems(j).sensors,target)) > 0)
+                            (sum(ismember(systems(j).sensors,sensor)) > 0)
                             % Modify PLC dictionary and create new
                             % entry for altered readings
                             eval(sprintf('%sdict(target) = alteredReading;', controllerName_));                                  
                             self = self.storeAlteredReadingEntry(...
-                                controllerName_, target, alteredReading);                                
+                                controllerName_, variable, target, alteredReading);                                
                         end
                     end
                 end
@@ -362,12 +363,12 @@ classdef EpanetCPASimulation
                     for j = 1 : size(systems,1)
                         controllerName_ = systems(j).name;
                         if (strcmp(controllerName_,controllerName) == 0) && ...
-                                (sum(ismember(systems(j).sensorsIn,target))>0)                                
+                                (sum(ismember(systems(j).sensorsIn,sensor))>0)                                
                             % Modify PLC dictionary and create new
                             % entry for altered readings
                             eval(sprintf('%sdict(target) = alteredReading;', controllerName_));                                  
                             self = self.storeAlteredReadingEntry(...
-                                controllerName_, target, alteredReading);                                
+                                controllerName_, variable, target, alteredReading);                                
                         end
                     end  
                 end
