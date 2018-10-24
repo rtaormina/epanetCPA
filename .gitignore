@@ -1,0 +1,6 @@
+# ignore all .csv files
+*.csv
+
+# but the patterns
+!ctown_patterns.csv
+!minitown_patterns.csv
