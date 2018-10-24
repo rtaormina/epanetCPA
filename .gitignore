@@ -4,3 +4,13 @@
 # but the patterns
 !ctown_patterns.csv
 !minitown_patterns.csv
+
+# ignore all .asv files
+*.asv
+
+# ignore all .svg files (output of jupyter notebook)
+*.svg
+
+# ignore all temp files from epanetCPA
+*.inpx
+*.$$$
