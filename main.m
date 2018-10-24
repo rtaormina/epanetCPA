@@ -11,15 +11,14 @@ inpFilePath = 'minitown_map.inp';
 
 % Define scenario
 scenarioFolder = './scenarios/minitown/';
-cpaFilePath = 'temp_attack.cpa';
+cpaFilePath = 'minitown_attack.cpa';
 noAttackCpaFile = 'minitown_no_attacks.cpa';
 exp_name = cpaFilePath(1:strfind(cpaFilePath,'.cpa')-1);
 
-% 
-% % Similation without attacks (used for comparison).
-% simul = EpanetCPA(inpFilePath, [scenarioFolder, noAttackCpaFile]); % 
-% simul = simul.run();
-% simul.outputResults('minitown_no_attacks');
+% Similation without attacks (used for comparison).
+simul = EpanetCPA(inpFilePath, [scenarioFolder, noAttackCpaFile]); % 
+simul = simul.run();
+simul.outputResults('minitown_no_attacks');
 
 % Similation with attacks
 simul = EpanetCPA(inpFilePath, [scenarioFolder,cpaFilePath]); % 
