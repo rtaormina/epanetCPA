@@ -33,7 +33,7 @@ PLC9, PLC5, P_T7
 [CYBERATTACKS]
 ; Type,Target,Init_cond,End_cond,Arguments
 ; Attack on communication link between T2 water level sensor and PLC3. A constant (HIGH) value of 5.6 meters ; is injected, leading PLC3 to close valve V2. Tank T2 empties and network is disconnected.
-Communication, PHY-P_T2-PLC3, TIME==10, TIME==20, constant 5.6
+Communication, NULL-P_T2-PLC3, TIME==10, TIME==20, constant 5.6
 
 [CYBEROPTIONS]
 verbosity, 1
