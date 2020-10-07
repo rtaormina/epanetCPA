@@ -141,9 +141,18 @@ classdef AttackOnSensor < CyberPhysicalAttack
     
     function thisReading = getReading(self, rowToCopyFrom, epanetSim)
         
-		time = epanetSim.T(rowToCopyFrom);        
+	time = epanetSim.T(rowToCopyFrom);        
         % get attacked component and index
         thisComponent = self.target;
+	
+	% remove prefix
+        temp = regexp(thisComponent,'_','split');
+        thisVariable = temp{1};
+        thisComponent = temp{2};
+        if ~ismember(thisVariable,'PFS')
+            error('Attacks targeting %s not implemented yet.',temp{1});
+        end 
+	
         [thisIndex,~,isNode] = EpanetHelper.getComponentIndex(thisComponent);                
         if isNode
             thisIndex = find(ismember(epanetSim.whatToStore.nodeIdx,thisIndex));
