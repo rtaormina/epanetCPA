@@ -268,11 +268,11 @@ classdef EpanetHelper
             % extend section with additional lines      
             sections(sectionIx).text = cat(1,sections(sectionIx).text,...
                 sprintf(' %s\t %3.3f\t %3.3f\t;',...
-                OFtank,str2num(coordLine{2})+10,str2num(coordLine{3})+10)); % dummy tank coords line
+                OFtank,str2double(coordLine{2})+10,str2double(coordLine{3})+10)); % dummy tank coords line
 
             sections(sectionIx).text = cat(1,sections(sectionIx).text,...
                 sprintf(' %s\t %3.3f\t %3.3f\t;',...
-                OFjunc,str2num(coordLine{2})+10,str2num(coordLine{3})));    % dummy junction coords line
+                OFjunc,str2double(coordLine{2})+10,str2double(coordLine{3})));    % dummy junction coords line
             
             % [JUNC]
             sectionIx = find(cellfun(@(x) strcmp(x,'[JUNCTIONS]'),{sections.name})); % get section index
@@ -382,11 +382,11 @@ classdef EpanetHelper
             % lines to add in ".inp" file
             linesToAdd_COORDS{(nCount-1)*2+1} = ...
                 sprintf(' %s\t %3.3f\t %3.3f\t;',...
-                PDjunc,str2num(coordLine{2})+20,str2num(coordLine{3}));      
+                PDjunc,str2double(coordLine{2})+20,str2double(coordLine{3}));      
 
             linesToAdd_COORDS{nCount*2} = ...
                 sprintf(' %s\t %3.3f\t %3.3f\t;',...
-                PDemit,str2num(coordLine{2})+40,str2num(coordLine{3}));
+                PDemit,str2double(coordLine{2})+40,str2double(coordLine{3}));
 
             % [JUNC]
             % line to add in ".inp" file
